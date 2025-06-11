@@ -1,0 +1,22 @@
+[project]
+name = "toolbox"
+version = "0.1.0"
+description = "Package for helping with data analysis and visualization."
+authors = [
+    { name = "Victoria Cheung", email = "vcheung@revmed.com" }
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.10.3",
+    "numpy>=2.3.0",
+    "pandas>=2.3.0",
+    "plotnine>=0.14.5",
+    "pycomplexheatmap>=1.8.2",
+    "ruff>=0.11.13",
+    "scikit-learn>=1.7.0",
+    "scipy>=1.15.3",
+    "seaborn>=0.13.2",
+    "statannotations>=0.7.2",
+    "umap>=0.1.1",
+]
