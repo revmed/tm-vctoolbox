@@ -1,17 +1,18 @@
 [project]
 name = "toolbox"
 version = "0.1.0"
-description = "Package for helping with data analysis and visualization."
+description = "General purpose functions/utils to make life easier."
 authors = [
-    { name = "Victoria Cheung", email = "vcheung@revmed.com" }
+    { name = "Victoria Cheung", email = "vcheung@revmed.com" },
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "ipykernel>=6.29.5",
     "matplotlib>=3.10.3",
     "numpy>=2.3.0",
     "pandas>=2.3.0",
+    "pathlib>=1.0.1",
     "plotnine>=0.14.5",
     "pycomplexheatmap>=1.8.2",
     "pytest>=8.4.0",
@@ -23,3 +24,8 @@ dependencies = [
     "statannotations>=0.7.2",
     "umap>=0.1.1",
 ]
+
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
