@@ -14,6 +14,9 @@ import sys
 import shutil
 from pathlib import Path
 
+from rpy2 import robjects
+from rpy2.robjects import pandas2ri, conversion
+from rpy2.robjects.conversion import get_conversion, localcoverter
 
 # %%
 def activate_renv(project_path: Path):
@@ -43,10 +46,6 @@ class RFunctionCaller:
 
         if project_path:
             activate_renv(project_path)
-
-        from rpy2 import robjects
-        from rpy2.robjects import pandas2ri, conversion
-        from rpy2.robjects.conversion import get_conversion
 
         self.robjects = robjects
         self.pandas2ri = pandas2ri
@@ -96,3 +95,65 @@ class RFunctionCaller:
 
 
 # %%
+class RScriptRunner:
+    """
+    A utility class to load and execute R functions from a specified R script using rpy2.
+
+    This class handles:
+    - Sourcing an R script.
+    - Setting the R working directory.
+    - Calling R functions with arguments.
+    - Converting R return values to Python objects (e.g., pandas DataFrames).
+
+    Example usage:
+        runner = RScriptRunner(Path("path/to/script.R"))
+        res = runner.call("my_r_function", arg1, arg2)
+    """
+
+    def __init__(self, script_path: Path):
+        """
+        Initialize the RScriptRunner with the path to an R script.
+
+        Parameters:
+            script_path (Path): Full path to the R script to be sourced.
+
+        Raises:
+            FileNotFoundError: If the script file does not exist.
+        """
+        if not script_path.exists():
+            raise FileNotFoundError(f"R script not found: {script_path}")
+        self.script_path = script_path
+        self.script_dir = script_path.parent
+        self._load_script()
+
+    def _load_script(self):
+        """
+        Internal method to set the R working directory and source the R script.
+        """
+        robjects.r['setd')
+        robjects.r(f'source("{self.script_path}")')
+
+    def call(self, function_name: str, *args):
+        """
+        Call a function defined in the sourced R script and convert the result to Python.
+
+        Parameters:
+            function_name (str): Name of the R function to call.
+            *args: Arguments to pass to the R function.
+
+        Returns:
+            Python object: The result of the R function converted to a Python object.
+
+        Raises:
+            ValueError: If the function is not found in the R global environment.
+            RuntimeError: If the function call fails.
+        """
+        try:
+            r_func = robjects.globalenv[function_name]
+            r_res = r_func(*args)
+            with localconverter(robjects.default_converter + pandas2ri.converter):
+                return robjects.conversion.rpy2py(r_res)
+        except KeyError:
+            raise ValueError(f"Function '{function_name}' not found in the R script.")
+        except Exception as e:
+            raise RuntimeError(f"Error calling R function '{function_name}': {e}")
