@@ -4,20 +4,14 @@
 #  --------------------------------------------------------------------
 from pathlib import Path
 from rpy2 import robjects
+from utils_rpy2 import activate_renv
 
-
-# Activate renv environment by sourcing the activate script
-# Construct the path using pathlib and f-string. This should be whatever path you have to your renv.
-hd = Path.home()
-renv_path = hd / "Developer/repos/renv/activate.R"
-renv_source_cmd = f'source("{renv_path}")'
-
-# Pass the constructed string to R
-robjects.r(renv_source_cmd)
+# Activate renv environment by sourcing the activate function
+activate_renv(Path.home() / "Developer/repos")
 
 # Now load your R script and call functions e.g. below
-robjects.r.source("test_r_functions.R")
-data_proc_fn = robjects.r["my_data_processing_function"]
+# robjects.r.source("test_r_functions.R")
+# data_proc_fn = robjects.r["my_data_processing_function"]
 
 # Continue with your pandas -> R conversion and function call...
 
@@ -25,9 +19,12 @@ data_proc_fn = robjects.r["my_data_processing_function"]
 #  ---------------------------------------------------------------
 #  Use this chunk here to load simple functions that are not dfs
 #  ---------------------------------------------------------------
-import pandas as pd
+from pathlib import Path
 from rpy2 import robjects
+from utils_rpy2 import activate_renv
 
+# Activate renv environment by sourcing the activate function
+activate_renv(Path.home() / "Developer/repos")
 
 # Load the R script containing your custom function
 robjects.r.source("test_r_functions.R")
@@ -48,11 +45,18 @@ print(python_result)
 
 
 # %%
-#  --- Use this chunk here to load functions that return dfs/dts ---
+#  -----------------------------------------------------------
+#  Use this chunk here to load functions that return dfs/dts
+#  -----------------------------------------------------------
+from pathlib import Path
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 from rpy2 import robjects
 import pandas as pd
+from utils_rpy2 import activate_renv
+
+# Activate renv environment by sourcing the activate function
+activate_renv(Path.home() / "Developer/repos")
 
 # Load R script
 robjects.r.source("test_r_functions.R")
@@ -74,5 +78,4 @@ with localconverter(robjects.default_converter + pandas2ri.converter):
 
 print(result_df)
 
-#  -------------------------------------------------------------------
 # %%
