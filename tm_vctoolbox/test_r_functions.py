@@ -1,9 +1,12 @@
 # %%
+# ruff: noqa: E402
 #  --------------------------------------------------------------------
 #  This chunk here shows how to load the `renv` if that is being used
 #  --------------------------------------------------------------------
 from pathlib import Path
+
 from rpy2 import robjects
+
 from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function
@@ -20,7 +23,7 @@ activate_renv(Path.home() / "Developer/repos/renv")
 #  Use this chunk here to load simple functions that are not dfs
 #  ---------------------------------------------------------------
 from pathlib import Path
-from rpy2 import robjects
+
 from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function
@@ -49,10 +52,12 @@ print(python_result)
 #  Use this chunk here to load functions that return dfs/dts
 #  -----------------------------------------------------------
 from pathlib import Path
+
+import pandas as pd
+from rpy2 import robjects
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
-from rpy2 import robjects
-import pandas as pd
+
 from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function

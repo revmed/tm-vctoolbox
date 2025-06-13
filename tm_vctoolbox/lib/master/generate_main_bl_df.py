@@ -6,8 +6,8 @@ This one focuses on the `generate_main_bl_df.R`
 
 # %%
 from pathlib import Path
-from tm_vctoolbox.utils_rpy2 import RScriptRunner, r_namedlist_to_dict
 
+from tm_vctoolbox.utils_rpy2 import RScriptRunner, r_namedlist_to_dict
 
 # %%
 # Activate renv where the `renv` is located
