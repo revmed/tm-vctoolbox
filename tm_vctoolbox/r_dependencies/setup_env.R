@@ -49,7 +49,9 @@ required_packages = c(
   "purrr",
   "lubridate",
   "rlang",
-  "yaml"
+  "yaml",
+  "reticulate",
+  "httpgd"
 )
 
 install.packages(required_packages, type="source")
