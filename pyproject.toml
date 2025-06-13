@@ -1,5 +1,5 @@
 [project]
-name = "toolbox"
+name = "tm-vctoolbox"
 version = "0.1.0"
 description = "General purpose functions/utils to make life easier."
 authors = [
