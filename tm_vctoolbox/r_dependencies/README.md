@@ -2,6 +2,8 @@
 This project uses [`renv`](https://rstudio.github.io/renv/) to manage R packages.
 Follow the steps below to install required system libraries and R packages.
 
+I've added `renv` to the root where I store my repos though that may not be best practice.
+
 ---
 
 ## Prerequisites
@@ -46,7 +48,8 @@ renv::snapshot()
 |`setup_env.R`| Installs an intializes `renv`. Installs other packages & subsequently snapshots the environment|
 |`install_r_dev_deps_homebrew.sh`|Installs macOS system libraries via Homebrew|
 |`renv.lock`|Exact package versions + sources|
-|`.RProfile`|Auto-activates `renv` on session start|
+|`.RProfile`|Auto-activates `renv` on session start. I add
+`source("/path/to/renv/activate.R")`|
 
 
 ---
