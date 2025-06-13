@@ -23,10 +23,11 @@ path_to_script = path_to_repo / "tm-graph2/lib/master/generate_main_bl_df.R"
 # %%
 # put full filepath to where `generate_main_bl_df.R`
 runner = RScriptRunner(path_to_renv, path_to_script)
-df = runner.call("generate_master_main_bl_df", "6236-001", assay="all")
-res = r_namedlist_to_dict(df)
-
-len(res["patient_ids"]["# patients in EDC"])
+df_list = runner.call("generate_master_main_bl_df", "6236-001", assay="all")
+res_dict = r_namedlist_to_dict(df_list)
+print(res_dict.keys())
+res_dict["df"]
+len(res_dict["patient_ids"]["# patients in EDC"])
 
 # %%
 # TODO: convert this to a function
