@@ -5,10 +5,28 @@ This one focuses on the `generate_main_bl_df.R`
 """
 
 # %%
-from tm_vctoolbox.utils_rpy2 import activate_renv, RScriptRunner
+from pathlib import Path
+from tm_vctoolbox.utils_rpy2 import RScriptRunner, r_namedlist_to_dict
+
 
 # %%
-runner = RScriptRunner(Path("/path/to/script.R"))
-df = runner.call("generate_master_main_bl_df", "6236-001")
+# Activate renv where the `renv` is located
+path_to_renv = Path.home() / "Developer/repos"
+path_to_repo = Path.home() / "Developer/repos"
+path_to_script = path_to_repo / "tm-graph2/lib/master/generate_main_bl_df.R"
+
+# # %%
+# call_r_script_function(
+#     path_to_renv, path_to_script, "generate_master_main_bl_df", "6236-001"
+# )
 
 # %%
+# put full filepath to where `generate_main_bl_df.R`
+runner = RScriptRunner(path_to_renv, path_to_script)
+df = runner.call("generate_master_main_bl_df", "6236-001", assay="all")
+res = r_namedlist_to_dict(df)
+
+len(res["patient_ids"]["# patients in EDC"])
+
+# %%
+# TODO: convert this to a function
