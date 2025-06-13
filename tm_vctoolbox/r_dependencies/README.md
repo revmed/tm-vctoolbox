@@ -48,8 +48,18 @@ renv::snapshot()
 |`setup_env.R`| Installs an intializes `renv`. Installs other packages & subsequently snapshots the environment|
 |`install_r_dev_deps_homebrew.sh`|Installs macOS system libraries via Homebrew|
 |`renv.lock`|Exact package versions + sources|
-|`.RProfile`|Auto-activates `renv` on session start. I add
-`source("/path/to/renv/activate.R")`|
+|`.RProfile`|Auto-activates `renv` on session start. See more notes below|
+
+This is what I put in my `.RProfile`
+> ```r
+> # Activate renv
+> source("/path/to/renv/activate.R")
+>
+> # Activate Python virtual environment via reticulate
+> library(reticulate)
+> use_virtualenv("/path/to/tm-vctoolbox/.venv", required = TRUE)
+> ```
+
 
 
 ---
@@ -58,3 +68,5 @@ renv::snapshot()
 - Always restart your R session after installing system libraries
 - Run `renv::status()` anytime to check if your environment is consistent.
 - Use `renv::diagnostics()` if something breaks (this checks your setup).
+- in my `~/.zshrc`, I've added: 
+    >`export PATH="/path/to/tm-vctoolbox/.venv/bin:$PATH"`
