@@ -16,7 +16,8 @@ from pathlib import Path
 
 from rpy2 import robjects
 from rpy2.robjects import pandas2ri, conversion
-from rpy2.robjects.conversion import get_conversion, localcoverter
+from rpy2.robjects.conversion import get_conversion, localconverter
+
 
 # %%
 def activate_renv(project_path: Path):
@@ -130,7 +131,7 @@ class RScriptRunner:
         """
         Internal method to set the R working directory and source the R script.
         """
-        robjects.r['setd')
+        robjects.r["setd"]
         robjects.r(f'source("{self.script_path}")')
 
     def call(self, function_name: str, *args):

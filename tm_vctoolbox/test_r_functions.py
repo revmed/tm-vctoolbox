@@ -4,7 +4,7 @@
 #  --------------------------------------------------------------------
 from pathlib import Path
 from rpy2 import robjects
-from utils_rpy2 import activate_renv
+from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function
 activate_renv(Path.home() / "Developer/repos")
@@ -21,7 +21,7 @@ activate_renv(Path.home() / "Developer/repos")
 #  ---------------------------------------------------------------
 from pathlib import Path
 from rpy2 import robjects
-from utils_rpy2 import activate_renv
+from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function
 activate_renv(Path.home() / "Developer/repos")
@@ -53,7 +53,7 @@ from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 from rpy2 import robjects
 import pandas as pd
-from utils_rpy2 import activate_renv
+from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function
 activate_renv(Path.home() / "Developer/repos")
