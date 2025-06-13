@@ -7,7 +7,7 @@ from rpy2 import robjects
 from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function
-activate_renv(Path.home() / "Developer/repos")
+activate_renv(Path.home() / "Developer/repos/renv")
 
 # Now load your R script and call functions e.g. below
 # robjects.r.source("test_r_functions.R")
@@ -24,7 +24,7 @@ from rpy2 import robjects
 from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function
-activate_renv(Path.home() / "Developer/repos")
+activate_renv(Path.home() / "Developer/repos/renv")
 
 # Load the R script containing your custom function
 robjects.r.source("test_r_functions.R")
@@ -56,7 +56,7 @@ import pandas as pd
 from tm_vctoolbox.utils_rpy2 import activate_renv
 
 # Activate renv environment by sourcing the activate function
-activate_renv(Path.home() / "Developer/repos")
+activate_renv(Path.home() / "Developer/repos/renv")
 
 # Load R script
 robjects.r.source("test_r_functions.R")
