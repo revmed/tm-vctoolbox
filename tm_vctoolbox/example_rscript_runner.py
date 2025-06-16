@@ -14,8 +14,8 @@ from tm_vctoolbox.utils_rpy2 import RScriptRunner, r_namedlist_to_dict
 # %%
 # Activate renv where the `renv` is located
 path_to_renv = Path.home() / "Developer/repos"
+# set path_to_renv = None if renv is not used
 path_to_repo = Path.home() / "Developer/repos"
-
 # %%
 # below is an example of how to run the `generate_main_bl_df.R` script using the RScriptRunner
 path_to_script = path_to_repo / "tm-graph2/lib/master/generate_main_bl_df.R"
