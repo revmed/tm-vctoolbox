@@ -63,11 +63,11 @@ class RScriptRunner:
     A utility class to load and execute R functions from a specified R script using rpy2.
     """
 
-    def __init__(self, path_to_renv: Path, script_path: Path):
+    def __init__(self, script_path: Path, path_to_renv: Path = None):
         if not script_path.exists():
             raise FileNotFoundError(f"R script not found: {script_path}")
 
-        self.path_to_renv = path_to_renv.resolve()
+        self.path_to_renv = path_to_renv.resolve() if path_to_renv else None
         self.script_path = script_path.resolve()
         self.script_dir = self.script_path.parent
 
@@ -77,7 +77,11 @@ class RScriptRunner:
         """
         Set the R working directory and source the R script.
         """
-        activate_renv(self.path_to_renv)
+        if self.path_to_renv:
+            activate_renv(self.path_to_renv)
+            print(f"[Info] Activated renv environment at: {self.path_to_renv}")
+        else:
+            print("[Warning] No renv environment supplied. Using system R.")
 
         robjects.r(f'setwd("{self.script_dir.as_posix()}")')
         robjects.r(f'source("{self.script_path.as_posix()}")')
