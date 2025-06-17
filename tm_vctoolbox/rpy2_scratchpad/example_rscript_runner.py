@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from tm_vctoolbox.utils_rpy2 import RScriptRunner, r_namedlist_to_dict
+from tm_vctoolbox.utils_rpy2 import RScriptRunner
 
 # %%
 # Activate renv where the `renv` is located
@@ -24,8 +24,7 @@ path_to_script = path_to_repo / "tm-graph2/lib/master/generate_main_bl_df.R"
 
 # put full filepath to where `generate_main_bl_df.R`
 runner = RScriptRunner(path_to_renv, path_to_script)
-df_list = runner.call("generate_master_main_bl_df", "6236-001", assay="all")
-res_dict = r_namedlist_to_dict(df_list)
+res_dict = runner.call("generate_master_main_bl_df", "6236-001", assay="all")
 print(list(res_dict.keys()))
 df = res_dict["df"]
 print(df.head())
@@ -49,10 +48,9 @@ path_to_script = path_to_repo / "tm-graph2/lib/master/generate_main_eot_df.R"
 
 # put full filepath to where `generate_main_eot_df.R`
 runner = RScriptRunner(path_to_renv, path_to_script)
-df_list = runner.call(
+res_dict = runner.call(
     "generate_master_main_eot_df", "6236-001", edc_table="edc_overview"
 )
-res_dict = r_namedlist_to_dict(df_list)
 print(res_dict.keys())
 
 # %%
@@ -61,8 +59,9 @@ path_to_script = path_to_repo / "tm-graph2/lib/master/generate_main_mr_df.R"
 
 # put full filepath to where `generate_main_mr_df.R`
 runner = RScriptRunner(path_to_renv, path_to_script)
-df_list = runner.call("generate_master_main_mr_df", "6236-001", enrollment_filter="yes")
-res_dict = r_namedlist_to_dict(df_list)
+res_dict = runner.call(
+    "generate_master_main_mr_df", "6236-001", enrollment_filter="yes"
+)
 print(res_dict.keys())
 
 # this table has the main df of info
