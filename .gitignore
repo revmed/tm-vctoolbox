@@ -9,3 +9,13 @@ wheels/
 # Virtual environments
 .venv
 toolbox/renv/*
+
+# File extensions to ignore
+*.csv
+*.json
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs and temporary files
+*.log
