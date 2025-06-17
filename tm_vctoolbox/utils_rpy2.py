@@ -419,7 +419,7 @@ def compare_r_py_dataframes(df1, df2, float_tol=1e-8):
     # --- Check columns ---
     if set(df1.columns) != set(df2.columns):
         results["columns_mismatch"] = True
-        print(f"[Warning] Column mismatch:")
+        print("[Warning] Column mismatch:")
         print(f"  df1: {df1.columns}")
         print(f"  df2: {df2.columns}")
         common_cols = df1.columns.intersection(df2.columns)

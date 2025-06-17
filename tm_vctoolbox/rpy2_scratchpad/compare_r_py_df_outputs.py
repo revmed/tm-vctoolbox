@@ -4,14 +4,10 @@ Script to compare DataFrame outputs from R and Python
 
 # %%
 from pathlib import Path
+
 import pandas as pd
-from tm_vctoolbox.utils_rpy2 import (
-    RScriptRunner,
-    # normalize_dtypes,
-    # align_numeric_dtypes,
-    # fix_r_dataframe_types,
-    compare_r_py_dataframes,
-)
+
+from tm_vctoolbox.utils_rpy2 import RScriptRunner, compare_r_py_dataframes
 
 # %%
 #  Set filepaths
