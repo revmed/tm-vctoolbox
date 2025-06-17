@@ -17,10 +17,12 @@ Usage:
 
 # %%
 from dataclasses import dataclass, field
-from typing import List
 from pathlib import Path
-import matplotlib.pyplot as plt
+from typing import List
+
 import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
+
 from tm_vctoolbox.utils import get_current_dir
 
 
