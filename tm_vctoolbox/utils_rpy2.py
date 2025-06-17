@@ -23,6 +23,7 @@ from rpy2.robjects.vectors import (
     ListVector,
     StrVector,
 )
+from rpy2.rinterface_lib.sexp import NULLType
 
 
 # %%
@@ -66,7 +67,7 @@ class RScriptRunner:
     def __init__(self, path_to_renv: Path | None, script_path: Path):
         """
         Initialize the RScriptRunner with the path to the renv environment and the R script.
-        Set `path_to_renv` to None if no renv is used.
+        Set path_to_renv to None if no renv is used.
         """
         if not script_path.exists():
             raise FileNotFoundError(f"R script not found: {script_path}")
@@ -90,7 +91,6 @@ class RScriptRunner:
         # Set the working directory to the script's directory
         robjects.r(f'setwd("{self.script_dir.as_posix()}")')
         robjects.r(f'source("{self.script_path.as_posix()}")')
-
         print(f"[Info] R script sourced: {self.script_path.name}")
 
     def call(self, function_name: str, *args, **kwargs):
@@ -104,17 +104,6 @@ class RScriptRunner:
                 r_args = [robjects.conversion.py2rpy(arg) for arg in args]
                 r_kwargs = {k: robjects.conversion.py2rpy(v) for k, v in kwargs.items()}
                 result = r_func(*r_args, **r_kwargs)
-
-                # If the result is a tibble, convert it to a base data.frame
-                if "tbl_df" in result.rclass:
-                    result = robjects.r("as.data.frame")
-
-                # Handle NULL result explicitly
-                if result.rclass[0] == "NULL":
-                    raise ValueError(
-                        f"R function '{function_name}' returned NULL — likely due to no data or a failed query."
-                    )
-
                 return robjects.conversion.rpy2py(result)
 
         except KeyError:
@@ -126,26 +115,55 @@ class RScriptRunner:
 # %%
 def r_namedlist_to_dict(namedlist):
     """
-    Recursively convert an R NamedList or ListVector to a Python dictionary,
-    unwrap R vectors (StrVector, IntVector, etc.) into Python lists,
-    and convert data.frames to pandas DataFrames.
+    Recursively convert an R NamedList or ListVector to a Python dictionary.
+    - Unwrap atomic R vectors (StrVector, IntVector, etc.) into Python lists or dicts if named.
+    - Convert data.frames to pandas DataFrames.
+    - Handles NULL or unnamed cases gracefully.
     """
-    # If it is a named list or list vector, convert recursively to dict
-    if isinstance(namedlist, (NamedList, ListVector)):
-        result = {}
-        for key, value in zip(namedlist.names(), namedlist):
-            result[key] = r_namedlist_to_dict(value)
-        return result
 
-    # If it's an atomic vector (str, int, float, bool), convert to Python list
+    # -------------------------------------------
+    # Handle named lists (NamedList or ListVector)
+    # -------------------------------------------
+    if isinstance(namedlist, (NamedList, ListVector)):
+        names = namedlist.names if not callable(namedlist.names) else namedlist.names()
+        result = {}
+
+        # Only iterate if names is not NULL
+        if not isinstance(names, NULLType):
+            for key, value in zip(names, namedlist):
+                key_str = (
+                    str(key)
+                    if key is not None and not isinstance(key, NULLType)
+                    else None
+                )
+                if key_str:
+                    result[key_str] = r_namedlist_to_dict(value)
+            return result
+
+        # If no names, fallback to a list
+        return [r_namedlist_to_dict(value) for value in namedlist]
+
+    # -------------------------------------------
+    # Handle atomic vectors (StrVector, IntVector, etc.)
+    # These may have names (e.g., c(a = 1, b = 2)) — if so, return a dict.
+    # Otherwise, convert to plain Python list.
+    # -------------------------------------------
     if isinstance(namedlist, (StrVector, IntVector, FloatVector, BoolVector)):
+        names = namedlist.names if not callable(namedlist.names) else namedlist.names()
+        if not isinstance(names, NULLType):
+            return {
+                str(n): v
+                for n, v in zip(names, list(namedlist))
+                if n is not None and not isinstance(n, NULLType)
+            }
         return list(namedlist)
 
-    # For data frames and other R objects, use pandas2ri conversion if possible
+    # -------------------------------------------
+    # Attempt conversion via pandas2ri — works for data.frames, tibbles, etc.
+    # If it fails, fall back to returning the original R object.
+    # -------------------------------------------
     with localconverter(robjects.default_converter + pandas2ri.converter):
         try:
-            py_obj = robjects.conversion.rpy2py(namedlist)
-            return py_obj
+            return robjects.conversion.rpy2py(namedlist)
         except Exception:
-            # fallback to returning as-is if conversion fails
             return namedlist
