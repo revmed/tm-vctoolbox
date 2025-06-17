@@ -108,4 +108,43 @@ runner = RScriptRunner(path_to_renv, path_to_script)
 df = runner.call("pull_guardant_query_master", "6236-001", edc_table="edc_overview")
 print(df.head())
 
+
+# %%
+# Below is an example of how to run the `query_ras_mutation_master.R` script using the RScriptRunner
+path_to_script = path_to_repo / "tm-graph2/lib/master/query_ras_mutation_master.R"
+
+# put full filepath to where `query_ras_mutation_master.R`
+runner = RScriptRunner(path_to_renv, path_to_script)
+df = runner.call("pull_ras_mutation_master_query", "6236-001", edc_table="edc_overview")
+print(df.head())
+
+# %%
+# Below is an example of how to run the `query_scan_master.R` script using the RScriptRunner
+path_to_script = path_to_repo / "tm-graph2/lib/master/query_scan_master.R"
+
+# put full filepath to where `query_scan_master.R`
+runner = RScriptRunner(path_to_renv, path_to_script)
+df = runner.call("pull_scan", "6236-001")
+print(df.head())
+
+# %%
+# This script only works since I dropped the `**- comments` columns from the table on the R side
+# Below is an example of how to run the `query_screening_master.R` script using the RScriptRunner
+path_to_script = path_to_repo / "tm-graph2/lib/master/query_screening_master.R"
+
+# put full filepath to where `query_screening_master.R`
+runner = RScriptRunner(path_to_renv, path_to_script)
+df = runner.call("pull_screening_query_master", "6236-001", edc_table="edc_overview")
+print(df.head())
+
+# %%
+# This script only works since I dropped the `**- comments` columns from the table on the R side
+# Below is an example of how to run the `query_biodesix_master.R` script using the RScriptRunner
+path_to_script = path_to_repo / "tm-graph2/lib/master/query_biodesix_master.R"
+
+# put full filepath to where `query_biodesix_master.R`
+runner = RScriptRunner(path_to_renv, path_to_script)
+df = runner.call("pull_biodesix_data", "6236-001")
+print(df.head())
+
 # %%
