@@ -70,9 +70,8 @@ df = res_dict["MR_data"]
 print(df.head())
 
 # %%
-# TODO: script not working:
-# RuntimeError: Error calling R function 'pull_edc_master': 'NULLType' object is not iterable
-# below is an example of how to run the `query_edc_master.R` script using the RScriptRunner
+# This script only works since I dropped the `**- comments` columns from the table on the R side
+# Below is an example of how to run the `query_edc_master.R` script using the RScriptRunner
 path_to_script = path_to_repo / "tm-graph2/lib/master/query_edc_master.R"
 
 # put full filepath to where `query_edc_master.R`
@@ -100,9 +99,8 @@ df = runner.call(
 print(df.head())
 
 # %%
-# TODO: script not working:
-# RuntimeError: Error calling R function 'pull_guardant_query_master': 'NULLType' object is not iterable
-# below is an example of how to run the `query_guardant_master.R` script using the RScriptRunner
+# Below is an example of how to run the `query_guardant_master.R` script using the RScriptRunner
+# This script only works since I dropped the `**- comments` columns from the table on the R side
 path_to_script = path_to_repo / "tm-graph2/lib/master/query_guardant_master.R"
 
 # put full filepath to where `query_guardant_master.R`
