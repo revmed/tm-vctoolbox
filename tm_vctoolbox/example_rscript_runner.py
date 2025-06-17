@@ -9,6 +9,8 @@ You should have the repo cloned somewhere and use those filepaths.
 # %%
 from pathlib import Path
 
+import pandas as pd
+
 from tm_vctoolbox.utils_rpy2 import RScriptRunner, r_namedlist_to_dict
 
 # %%
@@ -24,9 +26,20 @@ path_to_script = path_to_repo / "tm-graph2/lib/master/generate_main_bl_df.R"
 runner = RScriptRunner(path_to_renv, path_to_script)
 df_list = runner.call("generate_master_main_bl_df", "6236-001", assay="all")
 res_dict = r_namedlist_to_dict(df_list)
-print(res_dict.keys())
-res_dict["df"]
-len(res_dict["patient_ids"]["# patients in EDC"])
+print(list(res_dict.keys()))
+df = res_dict["df"]
+print(df.head())
+
+#  this would bring back what the values in count table map to
+count_table_map = dict()
+for k, v in res_dict["patient_ids"].items():
+    count_table_map[k] = len(v)
+
+print(
+    pd.DataFrame.from_dict(
+        count_table_map, orient="index", columns=["count"]
+    ).sort_values("count", ascending=False)
+)
 
 # %%
 # below is an example of how to run the `generate_main_eot_df.R` script using the RScriptRunner
@@ -53,6 +66,48 @@ res_dict = r_namedlist_to_dict(df_list)
 print(res_dict.keys())
 
 # this table has the main df of info
-print(res_dict["MR_data"])
+df = res_dict["MR_data"]
+print(df.head())
+
+# %%
+# TODO: script not working:
+# RuntimeError: Error calling R function 'pull_edc_master': 'NULLType' object is not iterable
+# below is an example of how to run the `query_edc_master.R` script using the RScriptRunner
+path_to_script = path_to_repo / "tm-graph2/lib/master/query_edc_master.R"
+
+# put full filepath to where `query_edc_master.R`
+runner = RScriptRunner(path_to_renv, path_to_script)
+
+# # check rlang::env()
+# utility_libs_path = (
+#     Path.home() / "Developer/repos/tm-graph2/lib/utility_libs.R"
+# ).as_posix()
+# robjects.r("utility_libs <- rlang::env()")
+# robjects.r(f'source("{utility_libs_path}", local = utility_libs)')
+
+# utility_libs = robjects.r["utility_libs"]
+
+# get_config_file = utility_libs.find("get_config_file")
+# config_path = get_config_file()[0]
+# print("Config path:", config_path)
+
+
+df = runner.call(
+    "pull_edc_master",
+    compound_study="6236-001",
+    edc_table="edc_overview",
+)
+print(df.head())
+
+# %%
+# TODO: script not working:
+# RuntimeError: Error calling R function 'pull_guardant_query_master': 'NULLType' object is not iterable
+# below is an example of how to run the `query_guardant_master.R` script using the RScriptRunner
+path_to_script = path_to_repo / "tm-graph2/lib/master/query_guardant_master.R"
+
+# put full filepath to where `query_guardant_master.R`
+runner = RScriptRunner(path_to_renv, path_to_script)
+df = runner.call("pull_guardant_query_master", "6236-001", edc_table="edc_overview")
+print(df.head())
 
 # %%
