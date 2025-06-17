@@ -430,11 +430,6 @@ def compare_r_py_dataframes(df1, df2, float_tol=1e-8):
     df1_aligned = df1.loc[:, common_cols]
     df2_aligned = df2.loc[:, common_cols]
 
-    # # --- Check index equality ---
-    # if not df1_aligned.index.equals(df2_aligned.index):
-    #     results["index_mismatch"] = True
-    #     print("[Warning] Index mismatch detected.")
-
     # --- Compare values column by column ---
     for col in common_cols:
         col_py = df1_aligned[col]
