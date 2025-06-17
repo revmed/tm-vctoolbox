@@ -97,8 +97,28 @@ class RScriptRunner:
 
     def call(self, function_name: str, *args, **kwargs):
         """
-        Call a function defined in the sourced R script and convert the result to Python.
+        Call an R function from the sourced script, and recursively convert & post-process the result.
+        Handles:
+        - Direct data.frame
+        - NamedList or ListVector
+        - Nested lists with data.frames inside
         """
+
+        def _recursive_postprocess(obj):
+            # Handle single DataFrame
+            if isinstance(obj, pd.DataFrame):
+                return postprocess_r_dataframe(obj)
+
+            # Handle dictionary (e.g. NamedList converted)
+            elif isinstance(obj, dict):
+                return {k: _recursive_postprocess(v) for k, v in obj.items()}
+
+            # Handle list of items
+            elif isinstance(obj, list):
+                return [_recursive_postprocess(item) for item in obj]
+
+            return obj  # Primitive values stay as-is
+
         try:
             r_func = robjects.globalenv[function_name]
 
@@ -106,13 +126,17 @@ class RScriptRunner:
                 r_args = [robjects.conversion.py2rpy(arg) for arg in args]
                 r_kwargs = {k: robjects.conversion.py2rpy(v) for k, v in kwargs.items()}
                 result = r_func(*r_args, **r_kwargs)
+
+            # Step 1: Try direct conversion
+            with localconverter(robjects.default_converter + pandas2ri.converter):
                 py_result = robjects.conversion.rpy2py(result)
 
-            # Post-process any DataFrame results to standardize NA, dtypes, etc.
-            if isinstance(py_result, pd.DataFrame):
-                py_result = postprocess_r_dataframe(py_result)
+            # Step 2: If it's still an R container, convert it
+            if isinstance(py_result, (NamedList, ListVector)):
+                py_result = r_namedlist_to_dict(py_result)
 
-            return py_result
+            # Step 3: Recursively process any nested frames
+            return _recursive_postprocess(py_result)
 
         except KeyError:
             raise ValueError(f"Function '{function_name}' not found in the R script.")
@@ -178,6 +202,25 @@ def r_namedlist_to_dict(namedlist):
 
 
 # %%
+def clean_r_dataframe(r_df):
+    """
+    Clean an R data.frame object by removing common non-structural attributes like .groups and .rows.
+    """
+    for attr in [".groups", ".rows"]:
+        try:
+            del r_df.attr[attr]
+        except (KeyError, AttributeError):
+            pass
+    return r_df
+
+
+# %%
+def fix_string_nans(df):
+    # Replace common string versions of NA/NaN with actual pd.NA
+    return df.replace(["nan", "NaN", "NA", "na", ""], pd.NA)
+
+
+# %%
 def normalize_single_df_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     df = df.replace(["", "nan", "NaN", "NA", "na"], pd.NA)
 
@@ -197,27 +240,6 @@ def normalize_single_df_dtypes(df: pd.DataFrame) -> pd.DataFrame:
                 df[col] = df[col].astype("float64")
 
     return df
-
-
-# %%
-def postprocess_r_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    df = fix_r_dataframe_types(df)
-    df = fix_string_nans(df)
-    df = normalize_single_df_dtypes(df)
-    return df
-
-
-# %%
-def clean_r_dataframe(r_df):
-    """
-    Clean an R data.frame object by removing common non-structural attributes like .groups and .rows.
-    """
-    for attr in [".groups", ".rows"]:
-        try:
-            del r_df.attr[attr]
-        except (KeyError, AttributeError):
-            pass
-    return r_df
 
 
 # %%
@@ -241,6 +263,7 @@ def fix_r_dataframe_types(df: pd.DataFrame) -> pd.DataFrame:
             values = series.dropna()
             if not values.empty and values.between(10000, 40000).all():
                 try:
+                    # "1970-01-01" is the reference date for R's Date type
                     df[col] = pd.to_datetime("1970-01-01") + pd.to_timedelta(
                         series, unit="D"
                     )
@@ -251,6 +274,23 @@ def fix_r_dataframe_types(df: pd.DataFrame) -> pd.DataFrame:
         if pd.api.types.is_datetime64tz_dtype(series):
             df[col] = series.dt.tz_localize(None)
 
+    return df
+
+
+# %%
+def postprocess_r_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    df = fix_r_dataframe_types(df)
+    df = fix_string_nans(df)
+    df = normalize_single_df_dtypes(df)
+
+    # Normalize R-style string index starting from "1"
+    if df.index.dtype == object:
+        try:
+            int_index = df.index.astype(int)
+            if (int_index == (np.arange(len(df)) + 1)).all():
+                df.index = pd.RangeIndex(start=0, stop=len(df))
+        except Exception:
+            pass  # leave index as-is if not convertible
     return df
 
 
@@ -341,12 +381,6 @@ def align_numeric_dtypes(df1, df2):
         df2[col] = s2
 
     return df1, df2
-
-
-# %%
-def fix_string_nans(df):
-    # Replace common string versions of NA/NaN with actual pd.NA
-    return df.replace(["nan", "NaN", "NA", "na", ""], pd.NA)
 
 
 # %%
