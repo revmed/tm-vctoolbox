@@ -87,8 +87,10 @@ class RScriptRunner:
         if self.path_to_renv:
             activate_renv(self.path_to_renv)
 
+        # Set the working directory to the script's directory
         robjects.r(f'setwd("{self.script_dir.as_posix()}")')
         robjects.r(f'source("{self.script_path.as_posix()}")')
+
         print(f"[Info] R script sourced: {self.script_path.name}")
 
     def call(self, function_name: str, *args, **kwargs):
@@ -102,6 +104,17 @@ class RScriptRunner:
                 r_args = [robjects.conversion.py2rpy(arg) for arg in args]
                 r_kwargs = {k: robjects.conversion.py2rpy(v) for k, v in kwargs.items()}
                 result = r_func(*r_args, **r_kwargs)
+
+                # If the result is a tibble, convert it to a base data.frame
+                if "tbl_df" in result.rclass:
+                    result = robjects.r("as.data.frame")
+
+                # Handle NULL result explicitly
+                if result.rclass[0] == "NULL":
+                    raise ValueError(
+                        f"R function '{function_name}' returned NULL — likely due to no data or a failed query."
+                    )
+
                 return robjects.conversion.rpy2py(result)
 
         except KeyError:
