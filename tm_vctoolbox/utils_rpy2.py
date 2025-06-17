@@ -263,7 +263,7 @@ def fix_r_dataframe_types(df: pd.DataFrame) -> pd.DataFrame:
             values = series.dropna()
             if not values.empty and values.between(10000, 40000).all():
                 try:
-                    # "1970-01-01" is the reference date for R's Date type
+                    # "1970-01-01" is the reference date for Unix Epoch
                     df[col] = pd.to_datetime("1970-01-01") + pd.to_timedelta(
                         series, unit="D"
                     )
