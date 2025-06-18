@@ -52,6 +52,7 @@ required_packages = c(
   "yaml",
   "reticulate",
   "httpgd"
+  "languageserver"
 )
 
 install.packages(required_packages, type="source")
