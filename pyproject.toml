@@ -15,6 +15,7 @@ dependencies = [
     "pathlib>=1.0.1",
     "plotnine>=0.14.5",
     "pycomplexheatmap>=1.8.2",
+    "python-pptx>=1.0.2",
     "radian>=0.6.15",
     "rpy2>=3.6.1",
     "scikit-learn>=1.7.0",
