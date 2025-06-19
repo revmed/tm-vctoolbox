@@ -13,6 +13,12 @@ toolbox/renv/*
 # File extensions to ignore
 *.csv
 *.json
+*.png
+*.pptx
+*.pdf
+
+# System files 
+*.DS_Store
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
