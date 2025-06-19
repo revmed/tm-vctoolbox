@@ -4,22 +4,8 @@ General purpose Python toolbox for translational medicine and data science workf
 
 This repo uses [uv](https://docs.astral.sh/uv/getting-started/installation/) for dependency management and [rpy2](https://rpy2.readthedocs.io/en/latest/) for R integration.
 
-If you git clone this repo, you can run `make install` to set up the Python environment and install all dependencies. The package will install in editable mode, so you can modify the code and see changes immediately.
-
-To create a virtual environment, run:
-```sh
-uv venv
-```
-
-To activate the virtual environment, run:
-```sh
-source .venv/bin/activate
-```
-
-To add as a python kernel for Jupyter notebooks/IPython, run:
-```sh
-uv run --python3 -- -m ipykernel install --user --name tm-vctoolbox --display-name "tm-vctoolbox"
-```
+If you git clone this repo, you can run `make setup` from the project root to set up the Python environment and install all dependencies.
+Then run `make install` to install the main dependencies so that it is importable as a package.
 
 ---
 
