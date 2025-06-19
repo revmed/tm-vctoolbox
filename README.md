@@ -152,7 +152,7 @@ res = runner.call("generate_master_main_bl_df", "6236-001", assay="all")
 print(res["df"])
 ```
 
-See [`rpy2_scratchpad/test_r_functions.py`](tm_vctoolbox/rpy2_scratchpad/test_r_functions.py) for more usage examples, including conversion between pandas and R data frames.
+See [`rpy2_scratchpad/example_rscript_runner.py`](tm_vctoolbox/rpy2_scratchpad/example_rscript_runner.py) for more usage examples
 
 ---
 
