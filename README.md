@@ -58,14 +58,12 @@ tm-vctoolbox/
 - **main.py**: Entry point for the package (prints a hello message).
 - **tm_vctoolbox/**: Main package directory.
   - **plotting/**: Plotting utilities and RVMD style definitions.
-    - `plots.py`: Example code for generating tables and exporting to PowerPoint/PDF.
+    - `plots.py`: Code for generating figures & tables.
     - `rvmd_style.py`: Custom fonts, color palettes, and matplotlib themes for RVMD.
   - **utils.py**: General Python utility functions.
   - **utils_rpy2.py**: Utilities for calling R functions from Python using `rpy2`, including:
     - `activate_renv`: Activates an R `renv` environment from Python.
     - `RScriptRunner`: Class for sourcing R scripts and calling R functions.
-    - `r_namedlist_to_dict`: Converts R named lists to Python dictionaries.
-    - DataFrame post-processing and comparison utilities.
   - **rpy2_scratchpad/**: Example/test code for R/Python interoperability.
     - `test_r_functions.py`/`.R`: Example R script and Python code for calling R functions and converting DataFrames.
     - `compare_r_py_df_outputs.py`: Compare DataFrame outputs from R and Python.
