@@ -2,6 +2,18 @@
 
 DEV_PACKAGES = pytest ruff isort black
 
+# Create venv and install deps, register kernel
+setup:
+	test -d .venv || uv venv .venv
+	uv sync
+	uv run python -m ipykernel install --user --name=tm-vctoolbox --display-name "tm-vctoolbox"
+
+# Create venv and install deps with native TLS support, register kernel
+setup-native-tls:
+	test -d .venv || uv venv .venv
+	uv --native-tls sync
+	uv run python -m ipykernel install --user --name=tm-vctoolbox --display-name "tm-vctoolbox"
+
 # Install main dependencies + your package in editable mode
 install:
 	uv --native-tls pip install -e .
@@ -32,3 +44,8 @@ format: isort black ruff
 # Just lint without fixing (ruff)
 lint:
 	ruff check .
+
+# Clean lockfile and __pycache__
+clean:
+	rm -f uv.lock
+	find . -type d -name '__pycache__' -exec rm -rf {} +
