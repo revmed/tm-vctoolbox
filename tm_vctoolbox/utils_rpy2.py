@@ -34,6 +34,7 @@ def activate_renv(path_to_renv: Path):
     Activates the renv environment using renv::load() to ensure the correct project is loaded.
     This avoids sourcing activate.R directly and avoids accidentally initializing a new environment.
     """
+
     renv_project_dir = path_to_renv.resolve()
     renv_activate = renv_project_dir / "renv" / "activate.R"
     renv_lock = renv_project_dir / "renv.lock"
@@ -49,8 +50,18 @@ def activate_renv(path_to_renv: Path):
         os.environ["R_ENVIRON_USER"] = str(renviron_file)
         print("[Info] R_ENVIRON_USER set to:", renviron_file)
 
+    # Load the renv package
+    try:
+        robjects.r("library(renv)")
+    except Exception:
+        print("[Info] renv package not found in R. Attempting to install...")
+        robjects.r('install.packages("renv", repos="https://cloud.r-project.org")')
+        # Try loading again after installation
+        robjects.r("library(renv)")
+
     # Load the renv environment using renv::load(path)
     try:
+        print("Using R at:", robjects.r("R.home()")[0])
         robjects.r(f'renv::load("{renv_project_dir.as_posix()}")')
         print(f"[Info] renv environment loaded for project: {renv_project_dir}")
     except Exception as e:
