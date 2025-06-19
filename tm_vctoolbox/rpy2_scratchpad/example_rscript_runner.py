@@ -42,8 +42,6 @@ print(
 
 # %%
 # below is an example of how to run the `generate_main_eot_df.R` script using the RScriptRunner
-# TODO: this script is not working as expected, need to fix it somewhere?
-# RuntimeError: Error calling R function 'generate_master_main_eot_df': Error in list(EOT_Failure = qc1, Non_Acquired_Variants = qc2, Non_EOT_Patients = qc3,  : argument 4 is empty
 path_to_script = path_to_repo / "tm-graph2/lib/master/generate_main_eot_df.R"
 
 # put full filepath to where `generate_main_eot_df.R`
@@ -51,7 +49,7 @@ runner = RScriptRunner(path_to_renv, path_to_script)
 res_dict = runner.call(
     "generate_master_main_eot_df", "6236-001", edc_table="edc_overview"
 )
-print(res_dict.keys())
+print(res_dict["df"])
 
 # %%
 # below is an example of how to run the `generate_main_mr_df.R` script using the RScriptRunner
