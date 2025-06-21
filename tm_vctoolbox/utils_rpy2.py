@@ -26,6 +26,7 @@ from rpy2.robjects.vectors import (
     ListVector,
     StrVector,
 )
+import rpy2.robjects as ro
 
 
 # %%
@@ -147,7 +148,7 @@ class RScriptRunner:
                 py_result = r_namedlist_to_dict(py_result)
 
             # Step 3: Recursively process any nested frames
-            return _recursive_postprocess(py_result)
+            return replace_r_na(_recursive_postprocess(py_result))
 
         except KeyError:
             raise ValueError(f"Function '{function_name}' not found in the R script.")
@@ -229,6 +230,28 @@ def clean_r_dataframe(r_df):
 def fix_string_nans(df):
     # Replace common string versions of NA/NaN with actual pd.NA
     return df.replace(["nan", "NaN", "NA", "na", ""], pd.NA)
+
+
+# %%
+def replace_r_na(obj):
+    """
+    Recursively replace R NA_Character with np.nan in any structure.
+    """
+    # Handle DataFrame
+    if isinstance(obj, pd.DataFrame):
+        return (
+            obj.replace({ro.NA_Character: np.nan}, regex=False)
+            if hasattr(ro, "NA_Character")
+            else obj
+        )
+    elif isinstance(obj, dict):
+        return {k: replace_r_na(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [replace_r_na(item) for item in obj]
+    elif hasattr(ro, "NA_Character") and obj is ro.NA_Character:
+        return np.nan
+    else:
+        return obj
 
 
 # %%
@@ -482,3 +505,6 @@ def compare_r_py_dataframes(df1, df2, float_tol=1e-8):
                 results["non_numeric_diffs"][col] = diffs
 
     return results
+
+
+# %%
