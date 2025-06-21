@@ -2,8 +2,7 @@
 This module contains functions for cleaning and standardizing data
 """
 
-# %%
-import numpy as np
+# %%np
 import pandas as pd
 
 
