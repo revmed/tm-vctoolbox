@@ -14,6 +14,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import rpy2.robjects as ro
 from rpy2 import robjects
 from rpy2.rinterface_lib.sexp import NULLType
 from rpy2.rlike.container import NamedList
@@ -26,7 +27,6 @@ from rpy2.robjects.vectors import (
     ListVector,
     StrVector,
 )
-import rpy2.robjects as ro
 
 
 # %%

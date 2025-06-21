@@ -44,6 +44,3 @@ def get_current_dir():
 
     # Get the directory of that filename
     return os.path.dirname(os.path.abspath(filename))
-
-
-# %%
